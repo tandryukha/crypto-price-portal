@@ -45,7 +45,7 @@ public class BitcoinPriceApiAdapter implements PriceApiAdapter {
     }
 
     private String getHistoricalPriceUrl(String currency, int days) {
-        String startDate = formatter.format(dateService.getDateForDaysBack(days));
+        String startDate = formatter.format(dateService.getDateForDaysBack(days-1));
         String endDate = formatter.format(dateService.getCurrentDate());
         return UriComponentsBuilder.fromHttpUrl("https://api.coindesk.com/v1/bpi/historical/close.json")
                 .queryParam("start", startDate)

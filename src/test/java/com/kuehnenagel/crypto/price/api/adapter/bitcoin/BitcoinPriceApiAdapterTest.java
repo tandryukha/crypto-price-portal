@@ -65,7 +65,7 @@ class BitcoinPriceApiAdapterTest {
     @Test
     void shouldReturnHistoricalPrice() {
         when(dateService.getCurrentDate()).thenReturn(Instant.parse("2013-09-06T10:15:30.00Z"));
-        when(dateService.getDateForDaysBack(5)).thenReturn(Instant.parse("2013-09-02T10:15:30.00Z"));
+        when(dateService.getDateForDaysBack(4)).thenReturn(Instant.parse("2013-09-02T10:15:30.00Z"));
         when(restTemplate.getForEntity("https://api.coindesk.com/v1/bpi/historical/close.json?start=2013-09-02&end=2013-09-06&currency=EUR", HistoricalBPI.class))
                 .thenReturn(new ResponseEntity<>(getHistoricalBPI(), HttpStatus.OK));
 
@@ -76,7 +76,7 @@ class BitcoinPriceApiAdapterTest {
     @Test
     void shouldReturnEmptyListIfHistoricalPriceNotAvailable() {
         when(dateService.getCurrentDate()).thenReturn(Instant.parse("2013-09-06T10:15:30.00Z"));
-        when(dateService.getDateForDaysBack(5)).thenReturn(Instant.parse("2013-09-02T10:15:30.00Z"));
+        when(dateService.getDateForDaysBack(4)).thenReturn(Instant.parse("2013-09-02T10:15:30.00Z"));
         when(restTemplate.getForEntity("https://api.coindesk.com/v1/bpi/historical/close.json?start=2013-09-02&end=2013-09-06&currency=ZZZ", HistoricalBPI.class))
                 .thenReturn(new ResponseEntity<>(null, HttpStatus.NOT_FOUND));
         assertEquals(emptyList(), priceApiAdapter.getHistoricalPrice("ZZZ", 5));
@@ -92,5 +92,4 @@ class BitcoinPriceApiAdapterTest {
                         "2013-09-05", 985.9107
                 ))).build();
     }
-    //todo unhappy scenarios when there is no data or currency is not supported
 }
