@@ -11,7 +11,7 @@ import org.springframework.web.client.RestTemplate;
 
 public class InstanceFactory {
     public static PriceStatsService createBitcoinPriceStatsService() {
-        return new PriceStatsServiceImpl(getBitcoinPriceApiAdapter(), 90);//todo move days to config
+        return new PriceStatsServiceImpl(getBitcoinPriceApiAdapter(), 30);//todo move days to config
     }
 
     private static PriceApiAdapter getBitcoinPriceApiAdapter() {
