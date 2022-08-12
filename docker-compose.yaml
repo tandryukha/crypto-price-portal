@@ -1,0 +1,4 @@
+services:
+  crypto-price-portal:
+    build:
+      context: .
