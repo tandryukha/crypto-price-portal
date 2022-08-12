@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PriceStats {
+    String currency;
     Double currentPrice;
     int periodDays;
     Double highestPeriodPrice;
