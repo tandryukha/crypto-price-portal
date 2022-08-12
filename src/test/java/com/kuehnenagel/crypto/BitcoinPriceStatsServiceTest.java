@@ -1,7 +1,7 @@
 package com.kuehnenagel.crypto;
 
 import com.kuehnenagel.crypto.price.dto.PriceStats;
-import com.kuehnenagel.crypto.price.facade.PriceFacade;
+import com.kuehnenagel.crypto.price.api.adapter.PriceApiAdapter;
 import com.kuehnenagel.crypto.price.stats.PriceStatsService;
 import com.kuehnenagel.crypto.price.stats.PriceStatsServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,20 +18,20 @@ import static org.mockito.Mockito.when;
 
 public class BitcoinPriceStatsServiceTest {
     @Mock
-    private PriceFacade bitcoinPriceFacade;
+    private PriceApiAdapter bitcoinPriceAPI;
 
     private PriceStatsService bitcoinPriceStatsService;
 
     @BeforeEach
     void setUp() throws Exception {
         MockitoAnnotations.openMocks(this).close();
-        bitcoinPriceStatsService = new PriceStatsServiceImpl(bitcoinPriceFacade,5);
+        bitcoinPriceStatsService = new PriceStatsServiceImpl(bitcoinPriceAPI,5);
     }
 
     @Test
     void shouldReturnPriceInformation() {
-        when(bitcoinPriceFacade.getCurrentPrice("EUR")).thenReturn(Optional.of(101d));
-        when(bitcoinPriceFacade.getHistoricalPrice("EUR", 5)).thenReturn(List.of(50.0, 60.1, 40.2, 60.3, 90.4));
+        when(bitcoinPriceAPI.getCurrentPrice("EUR")).thenReturn(Optional.of(101d));
+        when(bitcoinPriceAPI.getHistoricalPrice("EUR", 5)).thenReturn(List.of(50.0, 60.1, 40.2, 60.3, 90.4));
         PriceStats expectedPriceStats = PriceStats.builder().currentPrice(101.0).periodDays(5).highestPeriodPrice(90.4).lowestPeriodPrice(40.2).build();
 
         PriceStats bitcoinPriceStats = bitcoinPriceStatsService.getPriceStats("EUR");
@@ -40,8 +40,8 @@ public class BitcoinPriceStatsServiceTest {
 
     @Test
     void shouldReturnEmptyPriceIfNoInfoFetched() {
-        when(bitcoinPriceFacade.getCurrentPrice("EUR")).thenReturn(Optional.empty());
-        when(bitcoinPriceFacade.getHistoricalPrice("EUR", 5)).thenReturn(emptyList());
+        when(bitcoinPriceAPI.getCurrentPrice("EUR")).thenReturn(Optional.empty());
+        when(bitcoinPriceAPI.getHistoricalPrice("EUR", 5)).thenReturn(emptyList());
         PriceStats emptyPriceStats = PriceStats.builder().periodDays(5).build();
 
         PriceStats bitcoinPriceStats = bitcoinPriceStatsService.getPriceStats("EUR");
