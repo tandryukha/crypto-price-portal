@@ -1,5 +1,6 @@
 package com.kuehnenagel.crypto.price.stats;
 
+import com.kuehnenagel.crypto.exception.CurrencyNotSupportedException;
 import com.kuehnenagel.crypto.price.api.PriceApiAdapter;
 import com.kuehnenagel.crypto.price.stats.dto.PriceStats;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +28,7 @@ public class BitcoinPriceStatsServiceTest {
     }
 
     @Test
-    void shouldReturnPriceInformation() {
+    void shouldReturnPriceInformation() throws CurrencyNotSupportedException {
         when(bitcoinPriceAPI.getCurrentPrice("EUR")).thenReturn(Optional.of(101d));
         when(bitcoinPriceAPI.getHistoricalPrice("EUR", 5)).thenReturn(List.of(50.0, 60.1, 40.2, 60.3, 90.4));
         PriceStats expectedPriceStats = PriceStats.builder().currency("EUR").currentPrice(101.0).periodDays(5).highestPeriodPrice(90.4).lowestPeriodPrice(40.2).build();
@@ -35,7 +36,7 @@ public class BitcoinPriceStatsServiceTest {
     }
 
     @Test
-    void shouldReturnEmptyPriceIfNoInfoFetched() {
+    void shouldReturnEmptyPriceIfNoInfoFetched() throws CurrencyNotSupportedException {
         when(bitcoinPriceAPI.getCurrentPrice("EUR")).thenReturn(Optional.empty());
         when(bitcoinPriceAPI.getHistoricalPrice("EUR", 5)).thenReturn(emptyList());
         PriceStats emptyPriceStats = PriceStats.builder().currency("EUR").periodDays(5).build();

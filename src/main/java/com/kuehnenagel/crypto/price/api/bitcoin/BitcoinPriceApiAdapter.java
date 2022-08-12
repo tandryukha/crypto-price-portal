@@ -3,9 +3,11 @@ package com.kuehnenagel.crypto.price.api.bitcoin;
 import com.google.gson.Gson;
 import com.kuehnenagel.crypto.config.PortalConfiguration;
 import com.kuehnenagel.crypto.date.DateService;
+import com.kuehnenagel.crypto.exception.CurrencyNotSupportedException;
 import com.kuehnenagel.crypto.price.api.PriceApiAdapter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -35,16 +37,28 @@ public class BitcoinPriceApiAdapter implements PriceApiAdapter {
 
 
     @Override
-    public Optional<Double> getCurrentPrice(String currency) {
-        ResponseEntity<String> responseEntity = restTemplate.getForEntity(getCurrentPriceUrl(currency), String.class);
+    public Optional<Double> getCurrentPrice(String currency) throws CurrencyNotSupportedException {
+        ResponseEntity<String> responseEntity;
+        try {
+            responseEntity = restTemplate.getForEntity(getCurrentPriceUrl(currency), String.class);
+        } catch (HttpClientErrorException e) {
+            if (e.getStatusCode().is4xxClientError()) throw new CurrencyNotSupportedException();
+            return Optional.empty();
+        }
         String responseBody = responseEntity.getBody();
         Optional<CurrentBPI> currentBPI = getFromJson(responseBody, CurrentBPI.class);
         return currentBPI.map(CurrentBPI::getBpi).map(bpi -> bpi.get(currency.toUpperCase())).map(Price::getRateFloat);
     }
 
     @Override
-    public List<Double> getHistoricalPrice(String currency, int days) {
-        ResponseEntity<String> responseEntity = restTemplate.getForEntity(getHistoricalPriceUrl(currency, days), String.class);
+    public List<Double> getHistoricalPrice(String currency, int days) throws CurrencyNotSupportedException {
+        ResponseEntity<String> responseEntity;
+        try {
+            responseEntity = restTemplate.getForEntity(getHistoricalPriceUrl(currency, days), String.class);
+        } catch (HttpClientErrorException e) {
+            if (e.getStatusCode().is4xxClientError()) throw new CurrencyNotSupportedException();
+            return emptyList();
+        }
         String responseBody = responseEntity.getBody();
         Optional<HistoricalBPI> historicalBPI = getFromJson(responseBody, HistoricalBPI.class);
         return historicalBPI.map(HistoricalBPI::getBpi).map(TreeMap::values).map(collection -> collection.stream().toList()).orElse(emptyList());

@@ -2,6 +2,7 @@ package com.kuehnenagel.crypto.price.api.adapter.bitcoin;
 
 import com.kuehnenagel.crypto.context.InstanceFactory;
 import com.kuehnenagel.crypto.date.DateService;
+import com.kuehnenagel.crypto.exception.CurrencyNotSupportedException;
 import com.kuehnenagel.crypto.price.api.PriceApiAdapter;
 import com.kuehnenagel.crypto.price.api.bitcoin.BitcoinPriceApiAdapter;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +36,7 @@ class BitcoinPriceApiAdapterTest {
     }
 
     @Test
-    void shouldReturnPriceFromApi() {
+    void shouldReturnPriceFromApi() throws CurrencyNotSupportedException {
         when(restTemplate.getForEntity("https://api.coindesk.com/v1/bpi/currentprice/EUR.json", String.class))
                 .thenReturn(new ResponseEntity<>(getCurrentPriceResponse(), HttpStatus.OK));
         Double price = priceApiAdapter.getCurrentPrice("EUR").orElse(null);
@@ -43,21 +44,21 @@ class BitcoinPriceApiAdapterTest {
     }
 
     @Test
-    void shouldReturnEmptyResult_GivenNoMatchingCurrency() {
+    void shouldReturnEmptyResult_GivenNoMatchingCurrency() throws CurrencyNotSupportedException {
         when(restTemplate.getForEntity("https://api.coindesk.com/v1/bpi/currentprice/XYZ.json", String.class))
                 .thenReturn(new ResponseEntity<>(getCurrentPriceResponse(), HttpStatus.OK));
         assertNull(priceApiAdapter.getCurrentPrice("XYZ").orElse(null));
     }
 
     @Test
-    void shouldReturnEmptyResult_GivenEmptyBody() {
+    void shouldReturnEmptyResult_GivenEmptyBody() throws CurrencyNotSupportedException {
         when(restTemplate.getForEntity("https://api.coindesk.com/v1/bpi/currentprice/ZZZ.json", String.class))
                 .thenReturn(new ResponseEntity<>(null, HttpStatus.NOT_FOUND));
         assertNull(priceApiAdapter.getCurrentPrice("ZZZ").orElse(null));
     }
 
     @Test
-    void shouldReturnHistoricalPrice() {
+    void shouldReturnHistoricalPrice() throws CurrencyNotSupportedException {
         when(dateService.getCurrentDate()).thenReturn(Instant.parse("2013-09-06T10:15:30.00Z"));
         when(dateService.getDateForDaysBack(4)).thenReturn(Instant.parse("2013-09-02T10:15:30.00Z"));
         when(restTemplate.getForEntity("https://api.coindesk.com/v1/bpi/historical/close.json?start=2013-09-02&end=2013-09-06&currency=EUR", String.class))
@@ -68,7 +69,7 @@ class BitcoinPriceApiAdapterTest {
     }
 
     @Test
-    void shouldReturnEmptyListIfHistoricalPriceNotAvailable() {
+    void shouldReturnEmptyListIfHistoricalPriceNotAvailable() throws CurrencyNotSupportedException {
         when(dateService.getCurrentDate()).thenReturn(Instant.parse("2013-09-06T10:15:30.00Z"));
         when(dateService.getDateForDaysBack(4)).thenReturn(Instant.parse("2013-09-02T10:15:30.00Z"));
         when(restTemplate.getForEntity("https://api.coindesk.com/v1/bpi/historical/close.json?start=2013-09-02&end=2013-09-06&currency=ZZZ", String.class))

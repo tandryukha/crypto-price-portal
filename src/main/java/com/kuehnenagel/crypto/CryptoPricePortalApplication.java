@@ -20,6 +20,7 @@ public class CryptoPricePortalApplication {
             if (!currency.isBlank()) {
                 PriceStats priceStats = bitcoinPriceStatsService.getPriceStats(currency);
                 System.out.println(adapter.toString(priceStats));
+                System.out.println("==========================");
             }
         }
     }

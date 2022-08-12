@@ -73,4 +73,16 @@ class FaultTolerantPriceToStringAdapterTest {
         String output = adapter.toString(priceStats);
         assertEquals("No data is available for the EUR currency for the last 30 days", output);
     }
+
+    @DisplayName("Should clearly say when currency is not supported")
+    @Test
+    void shouldSayTheCurrencyNotSupported() {
+        PriceStats priceStats = PriceStats.builder()
+                .periodDays(30)
+                .currency("EUR")
+                .currencyNotSupported(true)
+                .build();
+        String output = adapter.toString(priceStats);
+        assertEquals("EUR currency is not supported by API for now, try another one", output);
+    }
 }
