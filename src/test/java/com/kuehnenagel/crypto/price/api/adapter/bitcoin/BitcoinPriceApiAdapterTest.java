@@ -16,6 +16,7 @@ import java.net.URI;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
 
 class BitcoinPriceApiAdapterTest {
@@ -31,12 +32,22 @@ class BitcoinPriceApiAdapterTest {
     }
 
     @Test
-    void getCurrentPrice() {
+    void shouldReturnPriceFromApi() {
         CurrentBPI bpi = CurrentBPI.builder().bpi(Map.of("EUR", new Price(23841.7739))).build();
         when(restTemplate.getForEntity(URI.create("https://api.coindesk.com/v1/bpi/currentprice/EUR.json"), CurrentBPI.class))
                 .thenReturn(new ResponseEntity<>(bpi, HttpStatus.OK));
+
         Double price = priceApiAdapter.getCurrentPrice("EUR").orElse(null);
         assertEquals(23841.7739, price);
+    }
+
+    @Test
+    void shouldReturnEmptyResult_GivenNoMatchingCurrency() {
+        CurrentBPI bpi = CurrentBPI.builder().bpi(Map.of("USD", new Price(23841.7739))).build();
+        when(restTemplate.getForEntity(URI.create("https://api.coindesk.com/v1/bpi/currentprice/EUR.json"), CurrentBPI.class))
+                .thenReturn(new ResponseEntity<>(bpi, HttpStatus.OK));
+
+        assertNull(priceApiAdapter.getCurrentPrice("EUR").orElse(null));
     }
 
     @Test
