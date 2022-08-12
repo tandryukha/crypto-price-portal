@@ -31,7 +31,7 @@ public class BitcoinPriceStatsServiceTest {
     void shouldReturnPriceInformation() throws CurrencyNotSupportedException {
         when(bitcoinPriceAPI.getCurrentPrice("EUR")).thenReturn(Optional.of(101d));
         when(bitcoinPriceAPI.getHistoricalPrice("EUR", 5)).thenReturn(List.of(50.0, 60.1, 40.2, 60.3, 90.4));
-        PriceStats expectedPriceStats = PriceStats.builder().currency("EUR").currentPrice(101.0).periodDays(5).highestPeriodPrice(90.4).lowestPeriodPrice(40.2).build();
+        PriceStats expectedPriceStats = PriceStats.builder().currency("EUR").currentPrice(101.0).historicalDays(5).highestPeriodPrice(90.4).lowestPeriodPrice(40.2).build();
         assertEquals(expectedPriceStats, bitcoinPriceStatsService.getPriceStats("EUR"));
     }
 
@@ -39,7 +39,7 @@ public class BitcoinPriceStatsServiceTest {
     void shouldReturnEmptyPriceIfNoInfoFetched() throws CurrencyNotSupportedException {
         when(bitcoinPriceAPI.getCurrentPrice("EUR")).thenReturn(Optional.empty());
         when(bitcoinPriceAPI.getHistoricalPrice("EUR", 5)).thenReturn(emptyList());
-        PriceStats emptyPriceStats = PriceStats.builder().currency("EUR").periodDays(5).build();
+        PriceStats emptyPriceStats = PriceStats.builder().currency("EUR").historicalDays(5).build();
         assertEquals(emptyPriceStats, bitcoinPriceStatsService.getPriceStats("EUR"));
     }
 }

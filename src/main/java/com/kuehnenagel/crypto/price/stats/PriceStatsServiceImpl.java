@@ -13,7 +13,7 @@ import static java.util.Collections.emptyList;
 @RequiredArgsConstructor
 public class PriceStatsServiceImpl implements PriceStatsService {
     private final PriceApiAdapter priceAPI;
-    private final int statDays;
+    private final int historicalDays;
 
     @Override
     public PriceStats getPriceStats(String currency) {
@@ -21,7 +21,7 @@ public class PriceStatsServiceImpl implements PriceStatsService {
         Optional<Double> currentPrice;
         boolean currencyNotSupported = false;
         try {
-            historicalPrice = priceAPI.getHistoricalPrice(currency, statDays);
+            historicalPrice = priceAPI.getHistoricalPrice(currency, historicalDays);
             currentPrice = priceAPI.getCurrentPrice(currency);
         } catch (CurrencyNotSupportedException e) {
             currencyNotSupported = true;
@@ -36,6 +36,6 @@ public class PriceStatsServiceImpl implements PriceStatsService {
                 .currentPrice(currentPrice.orElse(null))
                 .highestPeriodPrice(highestPrice.orElse(null))
                 .lowestPeriodPrice(lowestPrice.orElse(null))
-                .periodDays(statDays).build();
+                .historicalDays(historicalDays).build();
     }
 }

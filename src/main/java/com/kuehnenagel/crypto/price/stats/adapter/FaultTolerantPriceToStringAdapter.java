@@ -11,7 +11,7 @@ public class FaultTolerantPriceToStringAdapter implements PriceStatsToStringAdap
     public String toString(PriceStats priceStats) {
         String currency = priceStats.getCurrency();
         Double currentPrice = priceStats.getCurrentPrice();
-        int days = priceStats.getPeriodDays();
+        int days = priceStats.getHistoricalDays();
         Double maxPrice = priceStats.getHighestPeriodPrice();
         Double minPrice = priceStats.getLowestPeriodPrice();
         if (priceStats.isCurrencyNotSupported()) {

@@ -51,10 +51,10 @@ public class BitcoinPriceApiAdapter implements PriceApiAdapter {
     }
 
     @Override
-    public List<Double> getHistoricalPrice(String currency, int days) throws CurrencyNotSupportedException {
+    public List<Double> getHistoricalPrice(String currency, int historicalDays) throws CurrencyNotSupportedException {
         ResponseEntity<String> responseEntity;
         try {
-            responseEntity = restTemplate.getForEntity(getHistoricalPriceUrl(currency, days), String.class);
+            responseEntity = restTemplate.getForEntity(getHistoricalPriceUrl(currency, historicalDays), String.class);
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode().is4xxClientError()) throw new CurrencyNotSupportedException();
             return emptyList();
@@ -73,8 +73,8 @@ public class BitcoinPriceApiAdapter implements PriceApiAdapter {
         return format(currentPriceBaseUrl + "%s.json", currency);
     }
 
-    private String getHistoricalPriceUrl(String currency, int days) {
-        String startDate = formatter.format(dateService.getDateForDaysBack(days - 1));
+    private String getHistoricalPriceUrl(String currency, int historicalDays) {
+        String startDate = formatter.format(dateService.getDateForDaysBack(historicalDays - 1));
         String endDate = formatter.format(dateService.getCurrentDate());
         return UriComponentsBuilder.fromHttpUrl(historicalPriceBaseUrl)
                 .queryParam("start", startDate)

@@ -8,5 +8,5 @@ import java.util.Optional;
 public interface PriceApiAdapter {
     Optional<Double> getCurrentPrice(String currency) throws CurrencyNotSupportedException;
 
-    List<Double> getHistoricalPrice(String currency, int days) throws CurrencyNotSupportedException;
+    List<Double> getHistoricalPrice(String currency, int historicalDays) throws CurrencyNotSupportedException;
 }

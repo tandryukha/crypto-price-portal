@@ -14,7 +14,7 @@ class FaultTolerantPriceToStringAdapterTest {
     @Test
     void shouldConvertToUserFriendlyString() {
         PriceStats priceStats = PriceStats.builder()
-                .periodDays(30)
+                .historicalDays(30)
                 .currency("EUR")
                 .currentPrice(12345.876)
                 .lowestPeriodPrice(1111.1111)
@@ -31,7 +31,7 @@ class FaultTolerantPriceToStringAdapterTest {
     @Test
     void shouldConvertToUserFriendlyStringEvenIfHistoricalDataIsMissing() {
         PriceStats priceStats = PriceStats.builder()
-                .periodDays(30)
+                .historicalDays(30)
                 .currency("EUR")
                 .currentPrice(12345.876)
                 .lowestPeriodPrice(null)
@@ -47,7 +47,7 @@ class FaultTolerantPriceToStringAdapterTest {
     @Test
     void shouldConvertToUserFriendlyStringWhenCurrentPriceIsMissing() {
         PriceStats priceStats = PriceStats.builder()
-                .periodDays(30)
+                .historicalDays(30)
                 .currency("EUR")
                 .currentPrice(null)
                 .lowestPeriodPrice(1111.1111)
@@ -64,7 +64,7 @@ class FaultTolerantPriceToStringAdapterTest {
     @Test
     void shouldSayNoDataAvailableForThisCurrency() {
         PriceStats priceStats = PriceStats.builder()
-                .periodDays(30)
+                .historicalDays(30)
                 .currency("EUR")
                 .currentPrice(null)
                 .lowestPeriodPrice(null)
@@ -78,7 +78,7 @@ class FaultTolerantPriceToStringAdapterTest {
     @Test
     void shouldSayTheCurrencyNotSupported() {
         PriceStats priceStats = PriceStats.builder()
-                .periodDays(30)
+                .historicalDays(30)
                 .currency("EUR")
                 .currencyNotSupported(true)
                 .build();

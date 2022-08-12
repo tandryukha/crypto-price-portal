@@ -13,7 +13,7 @@ public class PriceStats {
     String currency;
     boolean currencyNotSupported;
     Double currentPrice;
-    int periodDays;
+    int historicalDays;
     Double highestPeriodPrice;
     Double lowestPeriodPrice;
 }
