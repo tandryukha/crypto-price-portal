@@ -2,6 +2,8 @@ package com.kuehnenagel.crypto.price.stats;
 
 import com.kuehnenagel.crypto.price.stats.dto.PriceStats;
 
+import java.util.Optional;
+
 public interface PriceStatsService {
-    PriceStats getPriceStats(String currency);
+    Optional<PriceStats> getPriceStats(String currency);
 }

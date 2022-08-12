@@ -5,6 +5,9 @@ import com.kuehnenagel.crypto.price.api.PriceApiAdapter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.Optional;
+
+import static java.util.Objects.isNull;
 
 @RequiredArgsConstructor
 public class PriceStatsServiceImpl implements PriceStatsService {
@@ -12,15 +15,16 @@ public class PriceStatsServiceImpl implements PriceStatsService {
     private final int statDays;
 
     @Override
-    public PriceStats getPriceStats(String currency) {
+    public Optional<PriceStats> getPriceStats(String currency) {
         List<Double> historicalPrice = priceAPI.getHistoricalPrice(currency, statDays);
-        Double highestPrice = historicalPrice.stream().max(Double::compareTo).orElse(null);
-        Double lowestPrice = historicalPrice.stream().min(Double::compareTo).orElse(null);
-        Double currentPrice = priceAPI.getCurrentPrice(currency).orElse(null);
-        return PriceStats.builder()
-                .currentPrice(currentPrice)
-                .highestPeriodPrice(highestPrice)
-                .lowestPeriodPrice(lowestPrice)
-                .periodDays(statDays).build();
+        Optional<Double> highestPrice = historicalPrice.stream().max(Double::compareTo);
+        Optional<Double> lowestPrice = historicalPrice.stream().min(Double::compareTo);
+        Optional<Double> currentPrice = priceAPI.getCurrentPrice(currency);
+        if (historicalPrice.isEmpty() || currentPrice.isEmpty()) return Optional.empty();
+        return Optional.of(PriceStats.builder()
+                .currentPrice(currentPrice.get())
+                .highestPeriodPrice(highestPrice.get())
+                .lowestPeriodPrice(lowestPrice.get())
+                .periodDays(statDays).build());
     }
 }

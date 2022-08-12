@@ -1,7 +1,7 @@
 package com.kuehnenagel.crypto.price.stats;
 
-import com.kuehnenagel.crypto.price.stats.dto.PriceStats;
 import com.kuehnenagel.crypto.price.api.PriceApiAdapter;
+import com.kuehnenagel.crypto.price.stats.dto.PriceStats;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -12,6 +12,7 @@ import java.util.Optional;
 
 import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
 
 public class BitcoinPriceStatsServiceTest {
@@ -31,18 +32,13 @@ public class BitcoinPriceStatsServiceTest {
         when(bitcoinPriceAPI.getCurrentPrice("EUR")).thenReturn(Optional.of(101d));
         when(bitcoinPriceAPI.getHistoricalPrice("EUR", 5)).thenReturn(List.of(50.0, 60.1, 40.2, 60.3, 90.4));
         PriceStats expectedPriceStats = PriceStats.builder().currentPrice(101.0).periodDays(5).highestPeriodPrice(90.4).lowestPeriodPrice(40.2).build();
-
-        PriceStats bitcoinPriceStats = bitcoinPriceStatsService.getPriceStats("EUR");
-        assertEquals(expectedPriceStats, bitcoinPriceStats);
+        assertEquals(expectedPriceStats, bitcoinPriceStatsService.getPriceStats("EUR").orElse(null));
     }
 
     @Test
     void shouldReturnEmptyPriceIfNoInfoFetched() {
         when(bitcoinPriceAPI.getCurrentPrice("EUR")).thenReturn(Optional.empty());
         when(bitcoinPriceAPI.getHistoricalPrice("EUR", 5)).thenReturn(emptyList());
-        PriceStats emptyPriceStats = PriceStats.builder().periodDays(5).build();
-
-        PriceStats bitcoinPriceStats = bitcoinPriceStatsService.getPriceStats("EUR");
-        assertEquals(emptyPriceStats, bitcoinPriceStats);
+        assertNull(bitcoinPriceStatsService.getPriceStats("EUR").orElse(null));
     }
 }
