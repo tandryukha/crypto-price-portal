@@ -23,8 +23,8 @@ class FaultTolerantPriceToStringAdapterTest {
         String output = adapter.toString(priceStats);
         assertEquals("""
                 Current price: 12345.88 EUR
-                Max price for the last 30 days: 100000000.00 EUR
-                Min price for the last 30 days: 1111.11 EUR""", output);
+                Max price available for the last 30 days: 100000000.00 EUR
+                Min price available for the last 30 days: 1111.11 EUR""", output);
     }
 
     @DisplayName("Should convert to user-friendly string even if historical data is missing")
@@ -56,8 +56,8 @@ class FaultTolerantPriceToStringAdapterTest {
         String output = adapter.toString(priceStats);
         assertEquals("""
                 Current price: N/A in EUR
-                Max price for the last 30 days: 100000000.00 EUR
-                Min price for the last 30 days: 1111.11 EUR""", output);
+                Max price available for the last 30 days: 100000000.00 EUR
+                Min price available for the last 30 days: 1111.11 EUR""", output);
     }
 
     @DisplayName("Should say no data available for this currency if no data is fetched from API")

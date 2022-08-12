@@ -45,8 +45,8 @@ public class FaultTolerantPriceToStringAdapter implements PriceStatsToStringAdap
     private static String toString(String currency, int days, Double maxPrice, Double minPrice) {
         return format("""
                         Current price: N/A in %s
-                        Max price for the last %s days: %.2f %s
-                        Min price for the last %s days: %.2f %s""",
+                        Max price available for the last %s days: %.2f %s
+                        Min price available for the last %s days: %.2f %s""",
                 currency,
                 days, maxPrice, currency,
                 days, minPrice, currency
@@ -56,8 +56,8 @@ public class FaultTolerantPriceToStringAdapter implements PriceStatsToStringAdap
     private static String toString(String currency, Double currentPrice, int days, Double maxPrice, Double minPrice) {
         return format("""
                         Current price: %.2f %s
-                        Max price for the last %s days: %.2f %s
-                        Min price for the last %s days: %.2f %s""",
+                        Max price available for the last %s days: %.2f %s
+                        Min price available for the last %s days: %.2f %s""",
                 currentPrice, currency,
                 days, maxPrice, currency,
                 days, minPrice, currency
