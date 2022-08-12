@@ -1,4 +1,4 @@
-package com.kuehnenagel.crypto.price.dto;
+package com.kuehnenagel.crypto.price.stats.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,7 +1,7 @@
 package com.kuehnenagel.crypto.price.stats;
 
-import com.kuehnenagel.crypto.price.dto.PriceStats;
-import com.kuehnenagel.crypto.price.api.adapter.PriceApiAdapter;
+import com.kuehnenagel.crypto.price.stats.dto.PriceStats;
+import com.kuehnenagel.crypto.price.api.PriceApiAdapter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;

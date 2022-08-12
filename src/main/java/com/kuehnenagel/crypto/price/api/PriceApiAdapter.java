@@ -1,4 +1,4 @@
-package com.kuehnenagel.crypto.price.api.adapter;
+package com.kuehnenagel.crypto.price.api;
 
 import java.util.List;
 import java.util.Optional;

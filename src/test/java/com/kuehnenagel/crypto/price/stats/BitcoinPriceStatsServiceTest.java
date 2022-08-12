@@ -1,9 +1,7 @@
-package com.kuehnenagel.crypto;
+package com.kuehnenagel.crypto.price.stats;
 
-import com.kuehnenagel.crypto.price.dto.PriceStats;
-import com.kuehnenagel.crypto.price.api.adapter.PriceApiAdapter;
-import com.kuehnenagel.crypto.price.stats.PriceStatsService;
-import com.kuehnenagel.crypto.price.stats.PriceStatsServiceImpl;
+import com.kuehnenagel.crypto.price.stats.dto.PriceStats;
+import com.kuehnenagel.crypto.price.api.PriceApiAdapter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;

@@ -1,6 +1,6 @@
-package com.kuehnenagel.crypto.price.api.adapter.bitcoin;
+package com.kuehnenagel.crypto.price.api.bitcoin;
 
-import com.kuehnenagel.crypto.price.api.adapter.PriceApiAdapter;
+import com.kuehnenagel.crypto.price.api.PriceApiAdapter;
 
 import java.util.List;
 import java.util.Optional;

@@ -1,7 +1,9 @@
 package com.kuehnenagel.crypto.price.api.adapter.bitcoin;
 
-import com.kuehnenagel.crypto.price.api.adapter.PriceApiAdapter;
+import com.kuehnenagel.crypto.price.api.PriceApiAdapter;
+import com.kuehnenagel.crypto.price.api.bitcoin.BitcoinPriceApiAdapter;
 import com.kuehnenagel.crypto.price.api.bitcoin.CurrentBPI;
+import com.kuehnenagel.crypto.price.api.bitcoin.Price;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -30,7 +32,7 @@ class BitcoinPriceApiAdapterTest {
 
     @Test
     void getCurrentPrice() {
-        CurrentBPI bpi = CurrentBPI.builder().bpi(Map.of("EUR", new CurrentBPI.Price(23841.7739))).build();
+        CurrentBPI bpi = CurrentBPI.builder().bpi(Map.of("EUR", new Price(23841.7739))).build();
         when(restTemplate.getForEntity(URI.create("https://api.coindesk.com/v1/bpi/currentprice/EUR.json"), CurrentBPI.class))
                 .thenReturn(new ResponseEntity<>(bpi, HttpStatus.OK));
         Double price = priceApiAdapter.getCurrentPrice("EUR").orElse(null);
