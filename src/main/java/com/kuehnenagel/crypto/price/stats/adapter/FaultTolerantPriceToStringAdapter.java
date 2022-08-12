@@ -14,7 +14,7 @@ public class FaultTolerantPriceToStringAdapter implements PriceStatsToStringAdap
         int days = priceStats.getPeriodDays();
         Double maxPrice = priceStats.getHighestPeriodPrice();
         Double minPrice = priceStats.getLowestPeriodPrice();
-        if (nonNull(currency) && nonNull(minPrice) && nonNull(maxPrice)) {
+        if (nonNull(currentPrice) && nonNull(minPrice) && nonNull(maxPrice)) {
             return format("""
                             Current price: %.2f %s
                             Max price for the last %s days: %.2f %s
@@ -23,6 +23,16 @@ public class FaultTolerantPriceToStringAdapter implements PriceStatsToStringAdap
                     days, maxPrice, currency,
                     days, minPrice, currency
             );
+        } else if (nonNull(minPrice) && nonNull(maxPrice)) {
+            return format("""
+                            Current price: N/A in %s
+                            Max price for the last %s days: %.2f %s
+                            Min price for the last %s days: %.2f %s""",
+                    currency,
+                    days, maxPrice, currency,
+                    days, minPrice, currency
+            );
+
         } else if (nonNull(currentPrice)) {
             return format("""
                             Current price: %.2f %s
@@ -30,7 +40,7 @@ public class FaultTolerantPriceToStringAdapter implements PriceStatsToStringAdap
                     currentPrice, currency,
                     days, currency);
         } else {
-            return "";//todo
+            return format("No data is available for the %s currency for the last %s days", currency, days);
         }
 
     }

@@ -42,6 +42,36 @@ class FaultTolerantPriceToStringAdapterTest {
                 Current price: 12345.88 EUR
                 Max/Min price for the last 30 days: N/A in EUR""", output);
     }
-    //todo unhappy path when no property present - say currency not supported
+
+
+    @Test
+    void shouldConvertToUserFriendlyStringWhenCurrentPriceIsMissing() {
+        PriceStats priceStats = PriceStats.builder()
+                .periodDays(30)
+                .currency("EUR")
+                .currentPrice(null)
+                .lowestPeriodPrice(1111.1111)
+                .highestPeriodPrice(99999999.99999)
+                .build();
+        String output = adapter.toString(priceStats);
+        assertEquals("""
+                Current price: N/A in EUR
+                Max price for the last 30 days: 100000000.00 EUR
+                Min price for the last 30 days: 1111.11 EUR""", output);
+    }
+
+    @DisplayName("Should say no data available for this currency if no data is fetched from API")
+    @Test
+    void shouldSayNoDataAvailableForThisCurrency() {
+        PriceStats priceStats = PriceStats.builder()
+                .periodDays(30)
+                .currency("EUR")
+                .currentPrice(null)
+                .lowestPeriodPrice(null)
+                .highestPeriodPrice(null)
+                .build();
+        String output = adapter.toString(priceStats);
+        assertEquals("No data is available for the EUR currency for the last 30 days", output);
+    }
     //todo unhappy path when some properties are missing -say some data was not fetched from API and say when not all data was present from API - like not all days
 }
