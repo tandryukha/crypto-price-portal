@@ -1,6 +1,7 @@
 package com.kuehnenagel.crypto.price.api.bitcoin;
 
 import com.google.gson.Gson;
+import com.kuehnenagel.crypto.config.PortalConfiguration;
 import com.kuehnenagel.crypto.date.DateService;
 import com.kuehnenagel.crypto.price.api.PriceApiAdapter;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +22,16 @@ import static java.util.Collections.emptyList;
 public class BitcoinPriceApiAdapter implements PriceApiAdapter {
     private final RestTemplate restTemplate;
     private final DateService dateService;
-    private final String baseUrl = "https://api.coindesk.com/v1/bpi/currentprice/";//todo move to config
+    private final String currentPriceBaseUrl;
+    private final String historicalPriceBaseUrl;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd").withZone(ZoneId.systemDefault());
+
+    public BitcoinPriceApiAdapter(RestTemplate restTemplate, DateService dateService, PortalConfiguration configuration) {
+        this.restTemplate = restTemplate;
+        this.dateService = dateService;
+        currentPriceBaseUrl = configuration.getBitcoinCurrentPriceBaseUrl();
+        historicalPriceBaseUrl = configuration.getBitcoinHistoricalPriceBaseUrl();
+    }
 
 
     @Override
@@ -47,13 +56,13 @@ public class BitcoinPriceApiAdapter implements PriceApiAdapter {
     }
 
     private String getCurrentPriceUrl(String currency) {
-        return format(baseUrl + "%s.json", currency);
+        return format(currentPriceBaseUrl + "%s.json", currency);
     }
 
     private String getHistoricalPriceUrl(String currency, int days) {
         String startDate = formatter.format(dateService.getDateForDaysBack(days - 1));
         String endDate = formatter.format(dateService.getCurrentDate());
-        return UriComponentsBuilder.fromHttpUrl("https://api.coindesk.com/v1/bpi/historical/close.json")
+        return UriComponentsBuilder.fromHttpUrl(historicalPriceBaseUrl)
                 .queryParam("start", startDate)
                 .queryParam("end", endDate)
                 .queryParam("currency", currency)
