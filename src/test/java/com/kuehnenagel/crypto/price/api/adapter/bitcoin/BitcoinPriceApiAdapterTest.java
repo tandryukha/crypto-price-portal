@@ -17,7 +17,9 @@ import org.springframework.web.client.RestTemplate;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
+import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
@@ -61,7 +63,7 @@ class BitcoinPriceApiAdapterTest {
     }
 
     @Test
-    void getHistoricalPrice() {
+    void shouldReturnHistoricalPrice() {
         when(dateService.getCurrentDate()).thenReturn(Instant.parse("2013-09-06T10:15:30.00Z"));
         when(dateService.getDateForDaysBack(5)).thenReturn(Instant.parse("2013-09-02T10:15:30.00Z"));
         when(restTemplate.getForEntity("https://api.coindesk.com/v1/bpi/historical/close.json?start=2013-09-02&end=2013-09-06&currency=EUR", HistoricalBPI.class))
@@ -71,15 +73,24 @@ class BitcoinPriceApiAdapterTest {
         assertEquals(List.of(1043.0618, 1036.1931, 1038.4625, 981.6364, 985.9107), historicalPrices);
     }
 
+    @Test
+    void shouldReturnEmptyListIfHistoricalPriceNotAvailable() {
+        when(dateService.getCurrentDate()).thenReturn(Instant.parse("2013-09-06T10:15:30.00Z"));
+        when(dateService.getDateForDaysBack(5)).thenReturn(Instant.parse("2013-09-02T10:15:30.00Z"));
+        when(restTemplate.getForEntity("https://api.coindesk.com/v1/bpi/historical/close.json?start=2013-09-02&end=2013-09-06&currency=ZZZ", HistoricalBPI.class))
+                .thenReturn(new ResponseEntity<>(null, HttpStatus.NOT_FOUND));
+        assertEquals(emptyList(), priceApiAdapter.getHistoricalPrice("ZZZ", 5));
+    }
+
     private static HistoricalBPI getHistoricalBPI() {
-        return HistoricalBPI.builder().bpi(
+        return HistoricalBPI.builder().bpi(new TreeMap<>(
                 Map.of(
                         "2013-09-01", 1043.0618,
                         "2013-09-02", 1036.1931,
                         "2013-09-03", 1038.4625,
                         "2013-09-04", 981.6364,
                         "2013-09-05", 985.9107
-                )).build();
+                ))).build();
     }
     //todo unhappy scenarios when there is no data or currency is not supported
 }
