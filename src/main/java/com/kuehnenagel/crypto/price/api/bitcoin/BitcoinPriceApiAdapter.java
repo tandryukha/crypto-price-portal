@@ -5,21 +5,28 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
+import static java.lang.String.format;
+import static java.util.Objects.isNull;
 import static java.util.Objects.requireNonNull;
 
 @RequiredArgsConstructor
 public class BitcoinPriceApiAdapter implements PriceApiAdapter {
     private final RestTemplate restTemplate;
-
+    private final String baseUrl = "https://api.coindesk.com/v1/bpi/currentprice/";//todo move to config
 
     @Override
     public Optional<Double> getCurrentPrice(String currency) {
-        ResponseEntity<CurrentBPI> responseEntity = restTemplate.getForEntity(URI.create("https://api.coindesk.com/v1/bpi/currentprice/EUR.json"), CurrentBPI.class);
-        return Optional.ofNullable(requireNonNull(responseEntity.getBody()).getBpi().getOrDefault(currency, new Price()).getRate());
+        ResponseEntity<CurrentBPI> responseEntity = restTemplate.getForEntity(getCurrentPriceUrl(currency), CurrentBPI.class);
+        CurrentBPI responseBody = responseEntity.getBody();
+        if (isNull(responseBody)) return Optional.empty();
+        return Optional.ofNullable(responseBody.getBpi().getOrDefault(currency, new Price()).getRate());
+    }
+
+    private String getCurrentPriceUrl(String currency) {
+        return format(baseUrl + "%s.json", currency);
     }
 
     @Override

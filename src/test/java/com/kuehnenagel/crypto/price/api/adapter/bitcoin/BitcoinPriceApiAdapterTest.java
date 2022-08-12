@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.URI;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,7 +33,7 @@ class BitcoinPriceApiAdapterTest {
     @Test
     void shouldReturnPriceFromApi() {
         CurrentBPI bpi = CurrentBPI.builder().bpi(Map.of("EUR", new Price(23841.7739))).build();
-        when(restTemplate.getForEntity(URI.create("https://api.coindesk.com/v1/bpi/currentprice/EUR.json"), CurrentBPI.class))
+        when(restTemplate.getForEntity("https://api.coindesk.com/v1/bpi/currentprice/EUR.json", CurrentBPI.class))
                 .thenReturn(new ResponseEntity<>(bpi, HttpStatus.OK));
 
         Double price = priceApiAdapter.getCurrentPrice("EUR").orElse(null);
@@ -44,10 +43,18 @@ class BitcoinPriceApiAdapterTest {
     @Test
     void shouldReturnEmptyResult_GivenNoMatchingCurrency() {
         CurrentBPI bpi = CurrentBPI.builder().bpi(Map.of("USD", new Price(23841.7739))).build();
-        when(restTemplate.getForEntity(URI.create("https://api.coindesk.com/v1/bpi/currentprice/EUR.json"), CurrentBPI.class))
+        when(restTemplate.getForEntity("https://api.coindesk.com/v1/bpi/currentprice/EUR.json", CurrentBPI.class))
                 .thenReturn(new ResponseEntity<>(bpi, HttpStatus.OK));
 
         assertNull(priceApiAdapter.getCurrentPrice("EUR").orElse(null));
+    }
+
+    @Test
+    void shouldReturnEmptyResult_GivenEmptyBody() {
+        when(restTemplate.getForEntity("https://api.coindesk.com/v1/bpi/currentprice/ZZZ.json", CurrentBPI.class))
+                .thenReturn(new ResponseEntity<>(null, HttpStatus.NOT_FOUND));
+
+        assertNull(priceApiAdapter.getCurrentPrice("ZZZ").orElse(null));
     }
 
     @Test
