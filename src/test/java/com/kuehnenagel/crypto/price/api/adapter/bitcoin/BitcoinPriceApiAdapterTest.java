@@ -27,7 +27,7 @@ class BitcoinPriceApiAdapterTest {
     @BeforeEach
     void setUp() throws Exception {
         MockitoAnnotations.openMocks(this).close();
-        priceApiAdapter = new BitcoinPriceApiAdapter();
+        priceApiAdapter = new BitcoinPriceApiAdapter(restTemplate);
     }
 
     @Test
