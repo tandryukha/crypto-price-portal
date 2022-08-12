@@ -30,7 +30,7 @@ public class BitcoinPriceApiAdapter implements PriceApiAdapter {
         ResponseEntity<String> responseEntity = restTemplate.getForEntity(getCurrentPriceUrl(currency), String.class);
         String responseBody = responseEntity.getBody();
         Optional<CurrentBPI> currentBPI = getFromJson(responseBody, CurrentBPI.class);
-        return currentBPI.map(CurrentBPI::getBpi).map(bpi -> bpi.get(currency)).map(Price::getRate);
+        return currentBPI.map(CurrentBPI::getBpi).map(bpi -> bpi.get(currency)).map(Price::getRateFloat);
     }
 
     @Override

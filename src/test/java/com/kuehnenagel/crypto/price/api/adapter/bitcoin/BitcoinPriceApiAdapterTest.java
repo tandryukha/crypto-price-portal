@@ -40,24 +40,22 @@ class BitcoinPriceApiAdapterTest {
 
     @Test
     void shouldReturnPriceFromApi() {
-        CurrentBPI bpi = CurrentBPI.builder().bpi(Map.of("EUR", new Price(23841.7739))).build();
-        when(restTemplate.getForEntity("https://api.coindesk.com/v1/bpi/currentprice/EUR.json", CurrentBPI.class))
-                .thenReturn(new ResponseEntity<>(bpi, HttpStatus.OK));
+        when(restTemplate.getForEntity("https://api.coindesk.com/v1/bpi/currentprice/EUR.json", String.class))
+                .thenReturn(new ResponseEntity<>(getCurrentPriceResponse(), HttpStatus.OK));
         Double price = priceApiAdapter.getCurrentPrice("EUR").orElse(null);
-        assertEquals(23841.7739, price);
+        assertEquals(23383.2758, price);
     }
 
     @Test
     void shouldReturnEmptyResult_GivenNoMatchingCurrency() {
-        CurrentBPI bpi = CurrentBPI.builder().bpi(Map.of("USD", new Price(23841.7739))).build();
-        when(restTemplate.getForEntity("https://api.coindesk.com/v1/bpi/currentprice/EUR.json", CurrentBPI.class))
-                .thenReturn(new ResponseEntity<>(bpi, HttpStatus.OK));
-        assertNull(priceApiAdapter.getCurrentPrice("EUR").orElse(null));
+        when(restTemplate.getForEntity("https://api.coindesk.com/v1/bpi/currentprice/XYZ.json", String.class))
+                .thenReturn(new ResponseEntity<>(getCurrentPriceResponse(), HttpStatus.OK));
+        assertNull(priceApiAdapter.getCurrentPrice("XYZ").orElse(null));
     }
 
     @Test
     void shouldReturnEmptyResult_GivenEmptyBody() {
-        when(restTemplate.getForEntity("https://api.coindesk.com/v1/bpi/currentprice/ZZZ.json", CurrentBPI.class))
+        when(restTemplate.getForEntity("https://api.coindesk.com/v1/bpi/currentprice/ZZZ.json", String.class))
                 .thenReturn(new ResponseEntity<>(null, HttpStatus.NOT_FOUND));
         assertNull(priceApiAdapter.getCurrentPrice("ZZZ").orElse(null));
     }
@@ -66,7 +64,7 @@ class BitcoinPriceApiAdapterTest {
     void shouldReturnHistoricalPrice() {
         when(dateService.getCurrentDate()).thenReturn(Instant.parse("2013-09-06T10:15:30.00Z"));
         when(dateService.getDateForDaysBack(4)).thenReturn(Instant.parse("2013-09-02T10:15:30.00Z"));
-        when(restTemplate.getForEntity("https://api.coindesk.com/v1/bpi/historical/close.json?start=2013-09-02&end=2013-09-06&currency=EUR", HistoricalBPI.class))
+        when(restTemplate.getForEntity("https://api.coindesk.com/v1/bpi/historical/close.json?start=2013-09-02&end=2013-09-06&currency=EUR", String.class))
                 .thenReturn(new ResponseEntity<>(getHistoricalBPI(), HttpStatus.OK));
 
         List<Double> historicalPrices = priceApiAdapter.getHistoricalPrice("EUR", 5);
@@ -77,19 +75,52 @@ class BitcoinPriceApiAdapterTest {
     void shouldReturnEmptyListIfHistoricalPriceNotAvailable() {
         when(dateService.getCurrentDate()).thenReturn(Instant.parse("2013-09-06T10:15:30.00Z"));
         when(dateService.getDateForDaysBack(4)).thenReturn(Instant.parse("2013-09-02T10:15:30.00Z"));
-        when(restTemplate.getForEntity("https://api.coindesk.com/v1/bpi/historical/close.json?start=2013-09-02&end=2013-09-06&currency=ZZZ", HistoricalBPI.class))
+        when(restTemplate.getForEntity("https://api.coindesk.com/v1/bpi/historical/close.json?start=2013-09-02&end=2013-09-06&currency=ZZZ", String.class))
                 .thenReturn(new ResponseEntity<>(null, HttpStatus.NOT_FOUND));
         assertEquals(emptyList(), priceApiAdapter.getHistoricalPrice("ZZZ", 5));
     }
 
-    private static HistoricalBPI getHistoricalBPI() {
-        return HistoricalBPI.builder().bpi(new TreeMap<>(
-                Map.of(
-                        "2013-09-01", 1043.0618,
-                        "2013-09-02", 1036.1931,
-                        "2013-09-03", 1038.4625,
-                        "2013-09-04", 981.6364,
-                        "2013-09-05", 985.9107
-                ))).build();
+    private static String getHistoricalBPI() {
+        return """
+                {
+                  "bpi": {
+                    "2013-09-01": 1043.0618,
+                    "2013-09-02": 1036.1931,
+                    "2013-09-03": 1038.4625,
+                    "2013-09-04": 981.6364,
+                    "2013-09-05": 985.9107
+                  },
+                  "disclaimer": "This data was produced from the CoinDesk Bitcoin Price Index. BPI value data returned as UAH.",
+                  "time": {
+                    "updated": "Sep 6, 2013 00:03:00 UTC",
+                    "updatedISO": "2013-09-06T00:03:00+00:00"
+                  }
+                }""";
+    }
+
+    private String getCurrentPriceResponse() {
+        return """
+                {
+                  "time": {
+                    "updated": "Aug 12, 2022 18:18:00 UTC",
+                    "updatedISO": "2022-08-12T18:18:00+00:00",
+                    "updateduk": "Aug 12, 2022 at 19:18 BST"
+                  },
+                  "disclaimer": "This data was produced from the CoinDesk Bitcoin Price Index (USD). Non-USD currency data converted using hourly conversion rate from openexchangerates.org",
+                  "bpi": {
+                    "USD": {
+                      "code": "USD",
+                      "rate": "24,003.8719",
+                      "description": "United States Dollar",
+                      "rate_float": 24003.8719
+                    },
+                    "EUR": {
+                      "code": "EUR",
+                      "rate": "23,383.2758",
+                      "description": "Euro",
+                      "rate_float": 23383.2758
+                    }
+                  }
+                }""";
     }
 }

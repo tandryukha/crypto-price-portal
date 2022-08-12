@@ -1,5 +1,6 @@
 package com.kuehnenagel.crypto.price.api.bitcoin;
 
+import com.google.gson.annotations.SerializedName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,5 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Price {
-    private Double rate;
+
+    @SerializedName(value = "rate_float")
+    private Double rateFloat;
 }
