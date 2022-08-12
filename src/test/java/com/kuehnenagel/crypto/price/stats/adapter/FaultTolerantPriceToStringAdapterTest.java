@@ -73,5 +73,4 @@ class FaultTolerantPriceToStringAdapterTest {
         String output = adapter.toString(priceStats);
         assertEquals("No data is available for the EUR currency for the last 30 days", output);
     }
-    //todo unhappy path when some properties are missing -say some data was not fetched from API and say when not all data was present from API - like not all days
 }

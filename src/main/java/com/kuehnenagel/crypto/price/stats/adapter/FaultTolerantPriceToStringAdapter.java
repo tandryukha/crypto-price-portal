@@ -14,34 +14,53 @@ public class FaultTolerantPriceToStringAdapter implements PriceStatsToStringAdap
         int days = priceStats.getPeriodDays();
         Double maxPrice = priceStats.getHighestPeriodPrice();
         Double minPrice = priceStats.getLowestPeriodPrice();
+        return convertToString(currency, currentPrice, days, maxPrice, minPrice);
+
+    }
+
+    private static String convertToString(String currency, Double currentPrice, int days, Double maxPrice, Double minPrice) {
         if (nonNull(currentPrice) && nonNull(minPrice) && nonNull(maxPrice)) {
-            return format("""
-                            Current price: %.2f %s
-                            Max price for the last %s days: %.2f %s
-                            Min price for the last %s days: %.2f %s""",
-                    currentPrice, currency,
-                    days, maxPrice, currency,
-                    days, minPrice, currency
-            );
+            return toString(currency, currentPrice, days, maxPrice, minPrice);
         } else if (nonNull(minPrice) && nonNull(maxPrice)) {
-            return format("""
-                            Current price: N/A in %s
-                            Max price for the last %s days: %.2f %s
-                            Min price for the last %s days: %.2f %s""",
-                    currency,
-                    days, maxPrice, currency,
-                    days, minPrice, currency
-            );
-
+            return toString(currency, days, maxPrice, minPrice);
         } else if (nonNull(currentPrice)) {
-            return format("""
-                            Current price: %.2f %s
-                            Max/Min price for the last %s days: N/A in %s""",
-                    currentPrice, currency,
-                    days, currency);
+            return toString(currency, currentPrice, days);
         } else {
-            return format("No data is available for the %s currency for the last %s days", currency, days);
+            return toString(currency, days);
         }
+    }
 
+    private static String toString(String currency, int days) {
+        return format("No data is available for the %s currency for the last %s days", currency, days);
+    }
+
+    private static String toString(String currency, Double currentPrice, int days) {
+        return format("""
+                        Current price: %.2f %s
+                        Max/Min price for the last %s days: N/A in %s""",
+                currentPrice, currency,
+                days, currency);
+    }
+
+    private static String toString(String currency, int days, Double maxPrice, Double minPrice) {
+        return format("""
+                        Current price: N/A in %s
+                        Max price for the last %s days: %.2f %s
+                        Min price for the last %s days: %.2f %s""",
+                currency,
+                days, maxPrice, currency,
+                days, minPrice, currency
+        );
+    }
+
+    private static String toString(String currency, Double currentPrice, int days, Double maxPrice, Double minPrice) {
+        return format("""
+                        Current price: %.2f %s
+                        Max price for the last %s days: %.2f %s
+                        Min price for the last %s days: %.2f %s""",
+                currentPrice, currency,
+                days, maxPrice, currency,
+                days, minPrice, currency
+        );
     }
 }
