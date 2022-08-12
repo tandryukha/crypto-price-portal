@@ -1,5 +1,6 @@
 package com.kuehnenagel.crypto.price.api.bitcoin;
 
+import com.kuehnenagel.crypto.date.DateService;
 import com.kuehnenagel.crypto.price.api.PriceApiAdapter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -10,12 +11,13 @@ import java.util.Optional;
 
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
-import static java.util.Objects.requireNonNull;
 
 @RequiredArgsConstructor
 public class BitcoinPriceApiAdapter implements PriceApiAdapter {
     private final RestTemplate restTemplate;
+    private final DateService dateService;
     private final String baseUrl = "https://api.coindesk.com/v1/bpi/currentprice/";//todo move to config
+
 
     @Override
     public Optional<Double> getCurrentPrice(String currency) {

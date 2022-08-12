@@ -1,5 +1,6 @@
 package com.kuehnenagel.crypto.price.api.adapter.bitcoin;
 
+import com.kuehnenagel.crypto.date.DateService;
 import com.kuehnenagel.crypto.price.api.PriceApiAdapter;
 import com.kuehnenagel.crypto.price.api.bitcoin.BitcoinPriceApiAdapter;
 import com.kuehnenagel.crypto.price.api.bitcoin.CurrentBPI;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
@@ -24,12 +26,14 @@ class BitcoinPriceApiAdapterTest {
 
     @Mock
     private RestTemplate restTemplate;
+    @Mock
+    private DateService dateService;
     private PriceApiAdapter priceApiAdapter;
 
     @BeforeEach
     void setUp() throws Exception {
         MockitoAnnotations.openMocks(this).close();
-        priceApiAdapter = new BitcoinPriceApiAdapter(restTemplate);
+        priceApiAdapter = new BitcoinPriceApiAdapter(restTemplate, dateService);
     }
 
     @Test
@@ -58,8 +62,10 @@ class BitcoinPriceApiAdapterTest {
 
     @Test
     void getHistoricalPrice() {
-        when(restTemplate.getForEntity("https://api.coindesk.com/v1/bpi/historical/close.json?start=2013-09-01&end=2013-09-05&currency=eur", HistoricalBPI.class))
-                .thenReturn(new ResponseEntity<>(getHistoricalBPI(), HttpStatus.OK));//todo make date injection testable
+        when(dateService.getCurrentDate()).thenReturn(Instant.parse("2013-09-06T10:15:30.00Z"));
+        when(dateService.getDateForDaysBack(5)).thenReturn(Instant.parse("2013-09-02T10:15:30.00Z"));
+        when(restTemplate.getForEntity("https://api.coindesk.com/v1/bpi/historical/close.json?start=2013-09-02&end=2013-09-06&currency=EUR", HistoricalBPI.class))
+                .thenReturn(new ResponseEntity<>(getHistoricalBPI(), HttpStatus.OK));
 
         List<Double> historicalPrices = priceApiAdapter.getHistoricalPrice("EUR", 5);
         assertEquals(List.of(1043.0618, 1036.1931, 1038.4625, 981.6364, 985.9107), historicalPrices);
