@@ -12,6 +12,7 @@ import org.mockito.MockitoAnnotations;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
@@ -36,6 +37,14 @@ public class BitcoinPriceStatsServiceTest {
         PriceStats bitcoinPriceStats = bitcoinPriceStatsService.getPriceStats("EUR");
         assertEquals(expectedPriceStats, bitcoinPriceStats);
     }
-    //todo handle if currency not present
-    //todo handle if no data fetched
+
+    @Test
+    void shouldReturnEmptyPriceIfNoInfoFetched() {
+        when(bitcoinPriceFacade.getCurrentPrice("EUR")).thenReturn(Optional.empty());
+        when(bitcoinPriceFacade.getHistoricalPrice("EUR", 5)).thenReturn(emptyList());
+        PriceStats emptyPriceStats = PriceStats.builder().periodDays(5).build();
+
+        PriceStats bitcoinPriceStats = bitcoinPriceStatsService.getPriceStats("EUR");
+        assertEquals(emptyPriceStats, bitcoinPriceStats);
+    }
 }
