@@ -1,11 +1,9 @@
 package com.kuehnenagel.crypto.price.api.adapter.bitcoin;
 
+import com.kuehnenagel.crypto.context.InstanceFactory;
 import com.kuehnenagel.crypto.date.DateService;
 import com.kuehnenagel.crypto.price.api.PriceApiAdapter;
 import com.kuehnenagel.crypto.price.api.bitcoin.BitcoinPriceApiAdapter;
-import com.kuehnenagel.crypto.price.api.bitcoin.CurrentBPI;
-import com.kuehnenagel.crypto.price.api.bitcoin.HistoricalBPI;
-import com.kuehnenagel.crypto.price.api.bitcoin.Price;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -16,8 +14,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,7 +31,7 @@ class BitcoinPriceApiAdapterTest {
     @BeforeEach
     void setUp() throws Exception {
         MockitoAnnotations.openMocks(this).close();
-        priceApiAdapter = new BitcoinPriceApiAdapter(restTemplate, dateService);
+        priceApiAdapter = new BitcoinPriceApiAdapter(restTemplate, dateService, InstanceFactory.CONFIG);
     }
 
     @Test

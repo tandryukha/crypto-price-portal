@@ -13,14 +13,14 @@ import org.springframework.web.client.RestTemplate;
 
 public class InstanceFactory {
 
-    public static final PortalConfiguration configuration = getPortalConfiguration();
+    public static final PortalConfiguration CONFIG = getPortalConfiguration();
 
     public static PriceStatsService createBitcoinPriceStatsService() {
-        return new PriceStatsServiceImpl(getBitcoinPriceApiAdapter(), configuration.getHistoricalDays());
+        return new PriceStatsServiceImpl(getBitcoinPriceApiAdapter(), CONFIG.getHistoricalDays());
     }
 
     private static PriceApiAdapter getBitcoinPriceApiAdapter() {
-        return new BitcoinPriceApiAdapter(new RestTemplate(), new DateService(), configuration);
+        return new BitcoinPriceApiAdapter(new RestTemplate(), new DateService(), CONFIG);
     }
 
     public static PriceStatsToStringAdapter createFaultTolerantPriceAdapter() {
