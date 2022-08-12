@@ -24,7 +24,7 @@ public class BitcoinPriceStatsServiceTest {
     @BeforeEach
     void setUp() throws Exception {
         MockitoAnnotations.openMocks(this).close();
-        bitcoinPriceStatsService = new PriceStatsServiceImpl(bitcoinPriceStatsService,5);
+        bitcoinPriceStatsService = new PriceStatsServiceImpl(bitcoinPriceFacade,5);
     }
 
     @Test
