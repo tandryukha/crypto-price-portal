@@ -22,7 +22,7 @@ class FaultTolerantPriceToStringAdapterTest {
                 .build();
         String output = adapter.toString(priceStats);
         assertEquals("""
-                Current price: 12345.88 EUR
+                Current bitcoin price: 12345.88 EUR
                 Max price available for the last 30 days: 100000000.00 EUR
                 Min price available for the last 30 days: 1111.11 EUR""", output);
     }
@@ -39,7 +39,7 @@ class FaultTolerantPriceToStringAdapterTest {
                 .build();
         String output = adapter.toString(priceStats);
         assertEquals("""
-                Current price: 12345.88 EUR
+                Current bitcoin price: 12345.88 EUR
                 Max/Min price for the last 30 days: N/A in EUR""", output);
     }
 
@@ -55,7 +55,7 @@ class FaultTolerantPriceToStringAdapterTest {
                 .build();
         String output = adapter.toString(priceStats);
         assertEquals("""
-                Current price: N/A in EUR
+                Current bitcoin price: N/A in EUR
                 Max price available for the last 30 days: 100000000.00 EUR
                 Min price available for the last 30 days: 1111.11 EUR""", output);
     }
